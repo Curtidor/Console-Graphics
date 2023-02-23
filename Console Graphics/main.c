@@ -5,7 +5,7 @@
 
 int main()
 {
-    Console* console = createConsole(119, 40, 16, 16);
+    Console* console = createConsole(132, 34, 8, 8);
     writeToConsoleBuffer(console->consoleBuffer, FOREGROUND_BLUE, FOREGROUND_INTENSITY);
 
 
@@ -20,6 +20,7 @@ int main()
         start = clock();
 
         // Run the code that you want to time
+        writeToConsoleBuffer(console->consoleBuffer, FOREGROUND_BLUE, FOREGROUND_INTENSITY);
         writeToConsole(console);
 
         // End timing the code

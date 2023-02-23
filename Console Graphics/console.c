@@ -16,6 +16,8 @@ Console* createConsoleXY(short x, short y, short width, short height, float font
     if (!console) return NULL;
 
     console->hConsole = getStandardHandle();
+    if (console->hConsole == NULL) return NULL;
+
     setConsoleFontSize(console, fontSizeX, fontSizeY);
 
     console->writeRegion.Left = x;
@@ -68,8 +70,8 @@ void writeToConsoleBuffer(ConsoleBuffer* consoleBuffer, int colorFlag, int inten
 
 int writeToConsole(Console* console)
 {
-    COORD cursorPos = { 0, 0 };  // Set cursor position to (0,0)
-    SetConsoleCursorPosition(console->hConsole, cursorPos);
+    DWORD dwCursorPos = (0 << 16) | 0;
+    //SetConsoleCursorPosition(console->hConsole, (COORD) { (SHORT)dwCursorPos, (SHORT)(dwCursorPos >> 16) });
     if (!WriteConsoleOutput
     (
         console->hConsole,
