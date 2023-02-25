@@ -5,8 +5,8 @@ typedef struct ConsoleBuffer
 {
     CHAR_INFO* buffer;
     COORD bufferSize;
-    COORD screenBufferSize;
     COORD bufferCoord;
+
 } ConsoleBuffer;
 
 
@@ -18,13 +18,12 @@ typedef struct Console
 
 } Console;
 
-Console* createConsole(short width, short height, float fontSizeX, float fontSizeY);
-Console* createConsoleXY(short x, short y, short width, short height, float fontSizeX, float fontSizeY);
+Console* createConsole(int width, int height, int fontSizeX, int fontSizeY);
+Console* createConsoleXY(int x, int y, int width, int height, int fontSizeX, int fontSizeY);
 
-HANDLE getStandardHandle();
-WORD createColor(int r, int g, int b);
-
-void writeToConsoleBuffer(ConsoleBuffer* consoleBuffer, int colorFlag, int intensityFlag);
-int writeToConsole(Console* console);
-int setConsoleFontSize(Console* console, float width, float height);
+void fillConsoleBuffer(ConsoleBuffer* consoleBuffer, int colorFlag, int intensityFlag);
 void setConsoleWindowSize(Console* console, int width, int height);
+
+int drawFrame(Console* console);
+int setConsoleFontSize(Console* console, short width, short height);
+int randomConsoleColor();

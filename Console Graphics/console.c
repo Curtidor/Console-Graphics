@@ -1,77 +1,69 @@
 ﻿#include <stdlib.h>
 #include "console.h"
 
-Console* createConsole(short width, short height, float fontSizeX, float fontSizeY)
+Console* createConsole(int width, int height, int fontSizeX, int fontSizeY)
 {
     Console* console = createConsoleXY(0, 0, width, height, fontSizeX, fontSizeY);
-    setConsoleFontSize(console, fontSizeX, fontSizeY);
     return console;
 }
 
-Console* createConsoleXY(short x, short y, short width, short height, float fontSizeX, float fontSizeY)
+Console* createConsoleXY(int x, int y, int width, int height, int fontSizeX, int fontSizeY)
 {
-
     Console* console = malloc(sizeof(Console));
-
     if (!console) return NULL;
 
-    console->hConsole = getStandardHandle();
-    if (console->hConsole == NULL) return NULL;
-
-    setConsoleFontSize(console, fontSizeX, fontSizeY);
+    console->hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    if (console->hConsole == INVALID_HANDLE_VALUE) {
+        return NULL;
+    }
+   
+    if (fontSizeX > 0 && fontSizeY > 0) {
+        setConsoleFontSize(console, fontSizeX, fontSizeY);
+    }
+    else {
+        fontSizeX = 8;
+        fontSizeY = 16;
+        setConsoleFontSize(console, fontSizeX, fontSizeY);
+    }
 
     console->writeRegion.Left = x;
     console->writeRegion.Top = y;
-    console->writeRegion.Right = y + width - 1;
-    console->writeRegion.Bottom = x + height - 1;
+    console->writeRegion.Right = x + width - 1;
+    console->writeRegion.Bottom = y + height - 1;
 
     console->consoleBuffer = malloc(sizeof(ConsoleBuffer));
-
     if (!console->consoleBuffer) return NULL;
 
     console->consoleBuffer->buffer = malloc(sizeof(CHAR_INFO) * width * height);
 
+    //console->consoleBuffer->totalBufferSize.X = width * fontSizeX;
+    //console->consoleBuffer->totalBufferSize.Y = height * fontSizeY;
 
     console->consoleBuffer->bufferSize.X = width;
     console->consoleBuffer->bufferSize.Y = height;
 
-    console->consoleBuffer->screenBufferSize.X = width * fontSizeX;
-    console->consoleBuffer->screenBufferSize.X = height * fontSizeY;
-
-
-    SetConsoleScreenBufferSize(console, console->consoleBuffer->screenBufferSize);
-    setConsoleWindowSize(console, width * fontSizeX, height * fontSizeY);
-
     console->consoleBuffer->bufferCoord.X = x;
     console->consoleBuffer->bufferCoord.Y = y;
+
+    COORD totalBufferSize = { width * fontSizeX, height * fontSizeY }; // acounts for the width as well as the fontSize
+
+    SetConsoleScreenBufferSize(console->hConsole, totalBufferSize);
+    setConsoleWindowSize(console, totalBufferSize.X, totalBufferSize.Y);
 
     return console;
 }
 
-HANDLE getStandardHandle()
-{
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    if (hConsole == INVALID_HANDLE_VALUE) {
-        return NULL;
-    }
-    return hConsole;
-}
-
-void writeToConsoleBuffer(ConsoleBuffer* consoleBuffer, int colorFlag, int intensityFlag)
+void fillConsoleBuffer(ConsoleBuffer* consoleBuffer, int colorFlag, int intensityFlag)
 {
     for (int i = 0; i < consoleBuffer->bufferSize.X * consoleBuffer->bufferSize.Y; i++) {
         consoleBuffer->buffer[i].Char.UnicodeChar = L'█';
-        consoleBuffer->buffer[i].Attributes = randomConsoleColor() | intensityFlag;
-
+        consoleBuffer->buffer[i].Attributes = colorFlag | intensityFlag;
     }
 }
 
 
-
-int writeToConsole(Console* console)
+int drawFrame(Console* console)
 {
-    DWORD dwCursorPos = (0 << 16) | 0;
-    //SetConsoleCursorPosition(console->hConsole, (COORD) { (SHORT)dwCursorPos, (SHORT)(dwCursorPos >> 16) });
     if (!WriteConsoleOutput
     (
         console->hConsole,
@@ -86,20 +78,8 @@ int writeToConsole(Console* console)
     return 0;
 }
 
-WORD createColor(int r, int g, int b)
-{
-    WORD attributes = (r << 8 | g << 3 | b >> 3);
-    return attributes;
 
-}
-
-int randomConsoleColor()
-{
-    int color[] = { FOREGROUND_RED, FOREGROUND_GREEN, FOREGROUND_BLUE, FOREGROUND_INTENSITY };
-    return color[rand() % 4];
-}
-
-int setConsoleFontSize(Console* console, float width, float height)
+int setConsoleFontSize(Console* console, short width, short height)
 {
     CONSOLE_FONT_INFOEX font = { sizeof(CONSOLE_FONT_INFOEX) };
     GetCurrentConsoleFontEx(console->hConsole, FALSE, &font);
@@ -119,7 +99,8 @@ void setConsoleWindowSize(Console* console, int width, int height)
     SetConsoleWindowInfo(console->hConsole, TRUE, &rect);
 }
 
-void drawCircle(int x, int y, int radius)
+int randomConsoleColor()
 {
-
+    int color[] = { FOREGROUND_RED, FOREGROUND_GREEN, FOREGROUND_BLUE, FOREGROUND_INTENSITY };
+    return color[rand() % 4];
 }
