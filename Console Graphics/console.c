@@ -13,18 +13,15 @@ Console* createConsoleXY(int x, int y, int width, int height, int fontSizeX, int
     if (!console) return NULL;
 
     console->hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    if (console->hConsole == INVALID_HANDLE_VALUE) {
-        return NULL;
-    }
+    if (console->hConsole == INVALID_HANDLE_VALUE) return NULL;
    
-    if (fontSizeX > 0 && fontSizeY > 0) {
-        setConsoleFontSize(console, fontSizeX, fontSizeY);
-    }
-    else {
+    if (fontSizeX <= 0 || fontSizeY <= 0) {
+        //sets the font size to the default sizes if a invalid font size is used
         fontSizeX = 8;
         fontSizeY = 16;
-        setConsoleFontSize(console, fontSizeX, fontSizeY);
     }
+    setConsoleFontSize(console, fontSizeX, fontSizeY);
+   
 
     console->writeRegion.Left = x;
     console->writeRegion.Top = y;
@@ -35,9 +32,6 @@ Console* createConsoleXY(int x, int y, int width, int height, int fontSizeX, int
     if (!console->consoleBuffer) return NULL;
 
     console->consoleBuffer->buffer = malloc(sizeof(CHAR_INFO) * width * height);
-
-    //console->consoleBuffer->totalBufferSize.X = width * fontSizeX;
-    //console->consoleBuffer->totalBufferSize.Y = height * fontSizeY;
 
     console->consoleBuffer->bufferSize.X = width;
     console->consoleBuffer->bufferSize.Y = height;
@@ -64,6 +58,8 @@ void fillConsoleBuffer(ConsoleBuffer* consoleBuffer, int colorFlag, int intensit
 
 int drawFrame(Console* console)
 {
+    COORD temp = { 0,0 };
+    SetConsoleCursorPosition(console->hConsole, temp);
     if (!WriteConsoleOutput
     (
         console->hConsole,
