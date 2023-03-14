@@ -3,8 +3,7 @@
 
 Console* createConsole(int width, int height, int fontSizeX, int fontSizeY)
 {
-    Console* console = createConsoleXY(0, 0, width, height, fontSizeX, fontSizeY);
-    return console;
+    return createConsoleXY(0, 0, width, height, fontSizeX, fontSizeY);
 }
 
 Console* createConsoleXY(int x, int y, int width, int height, int fontSizeX, int fontSizeY)
@@ -39,7 +38,8 @@ Console* createConsoleXY(int x, int y, int width, int height, int fontSizeX, int
     console->consoleBuffer->bufferCoord.X = x;
     console->consoleBuffer->bufferCoord.Y = y;
 
-    COORD totalBufferSize = { width * fontSizeX, height * fontSizeY }; // acounts for the width as well as the fontSize
+    // accounts for the size as well as the fontSize
+    COORD totalBufferSize = { width * fontSizeX, height * fontSizeY }; 
 
     SetConsoleScreenBufferSize(console->hConsole, totalBufferSize);
     setConsoleWindowSize(console, totalBufferSize.X, totalBufferSize.Y);
@@ -47,11 +47,11 @@ Console* createConsoleXY(int x, int y, int width, int height, int fontSizeX, int
     return console;
 }
 
-void fillConsoleBuffer(ConsoleBuffer* consoleBuffer, int colorFlag, int intensityFlag)
+void fillConsoleBuffer(ConsoleBuffer* consoleBuffer, int color, int intensity)
 {
     for (int i = 0; i < consoleBuffer->bufferSize.X * consoleBuffer->bufferSize.Y; i++) {
         consoleBuffer->buffer[i].Char.UnicodeChar = L'█';
-        consoleBuffer->buffer[i].Attributes = colorFlag | intensityFlag;
+        consoleBuffer->buffer[i].Attributes = color | intensity;
     }
 }
 
@@ -59,7 +59,7 @@ void fillConsoleBuffer(ConsoleBuffer* consoleBuffer, int colorFlag, int intensit
 int drawFrame(Console* console)
 {
     COORD temp = { 0,0 };
-    SetConsoleCursorPosition(console->hConsole, temp);
+    //SetConsoleCursorPosition(console->hConsole, temp);
     if (!WriteConsoleOutput
     (
         console->hConsole,
@@ -97,6 +97,5 @@ void setConsoleWindowSize(Console* console, int width, int height)
 
 int randomConsoleColor()
 {
-    int color[] = { FOREGROUND_RED, FOREGROUND_GREEN, FOREGROUND_BLUE, FOREGROUND_INTENSITY };
-    return color[rand() % 4];
+    return rand() % 16;
 }

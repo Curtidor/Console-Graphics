@@ -6,7 +6,6 @@ typedef struct ConsoleBuffer
     CHAR_INFO* buffer;
     COORD bufferSize;
     COORD bufferCoord;
-
 } ConsoleBuffer;
 
 
@@ -21,7 +20,7 @@ typedef struct Console
 Console* createConsole(int width, int height, int fontSizeX, int fontSizeY);
 Console* createConsoleXY(int x, int y, int width, int height, int fontSizeX, int fontSizeY);
 
-void fillConsoleBuffer(ConsoleBuffer* consoleBuffer, int colorFlag, int intensityFlag);
+void fillConsoleBuffer(ConsoleBuffer* consoleBuffer, int color, int intensity);
 void setConsoleWindowSize(Console* console, int width, int height);
 
 int drawFrame(Console* console);
