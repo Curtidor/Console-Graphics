@@ -1,5 +1,5 @@
 # Console-Graphics
-This is a simple project that provides an easy and quick way to use the console in Windows. It consists of two header files, console.h and shapes.h, that define structs and functions for creating a console window, drawing shapes.
+This is a simple for fun project that provides an easy and quick way to use the console in Windows. It consists of two header files, console.h and shapes.h, that define structs and functions for creating a console window, drawing shapes.
 
 ## Features
 * Easy creation of a console window with a specified size and font size.
