@@ -1,17 +1,27 @@
-#include <stdio.h>
+#include <stdlib.h>
 #include "console.h"
 #include "shapes.h"
 
+
+
 int main()
 {
-    Console* console = createConsole(80, 50, 8, 8);
 
-    fillConsoleBuffer(console->consoleBuffer, 0, 0);
+    Console* console = createConsole(270, 60, 10, 8);
+    fillConsoleBuffer(console->consoleBuffer, FOREGROUND_BLUE, FOREGROUND_INTENSITY);
 
-    writeRect(console->consoleBuffer, 10, 10, 20, 10, rand() % 16);
-    writeCircle(console->consoleBuffer, 5, 30, 30, rand() % 16);
 
-    drawFrame(console);
+    while (1) {
+
+        // Start timing the code
+        int x = rand() % console->consoleBuffer->bufferSize.X;
+        int y = rand() % console->consoleBuffer->bufferSize.Y;
+
+        writeCircle(console->consoleBuffer, rand() % 10 + 1, x, y, rand() % 16);
+
+        //drawTestScene(console);
+        drawFrame(console);
+    }
 
     return 0;
 }
