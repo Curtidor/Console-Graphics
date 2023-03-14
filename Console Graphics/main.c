@@ -13,7 +13,6 @@ int main()
 
     while (1) {
 
-        // Start timing the code
         int x = rand() % console->consoleBuffer->bufferSize.X;
         int y = rand() % console->consoleBuffer->bufferSize.Y;
 
